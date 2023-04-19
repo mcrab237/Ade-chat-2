@@ -52,7 +52,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signup = useMutation({
     mutationFn: (user: User) => {
-      return axios.post(`${import.meta.env.VITE_SERVER_URL}/signup`, user)
+      return axios.post('https://adechat.herokuapp.com/signup', user)
     },
     onSuccess() {
       navigate("/login")
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useMutation({
     mutationFn: (id: string) => {
       return axios
-        .post(`${import.meta.env.VITE_SERVER_URL}/login`, { id })
+        .post('https://adechat.herokuapp.com/login', { id })
         .then(res => {
           return res.data as { token: string; user: User }
         })
