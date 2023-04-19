@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from "react"
+import { FormEvent, useRef } from "react"
 import { Button } from "../components/Button"
 import { Input } from "../components/Input"
 import { useAuth } from "../context/AuthContext"
@@ -17,19 +17,19 @@ export function Signup() {
     const username = usernameRef.current?.value
     const name = nameRef.current?.value
     const imageUrl = imageUrlRef.current?.value
-    const password = passwordRef.current?.value || '';
-
-
-    if (username == null || username === "" || name == null || name === "") {
+    const password = passwordRef.current?.value
+    if (username == null || username === "" || name == null || name === "" || password == null || password === "") {
       return
     }
+
     if(password === null || password === ""){
-      alert("Please enter Password")
-    } else if (password.length < 7){
-      alert("Password is too short")
+      alert("Please Enter Password")
+    } else if(password.length < 8 ){
+      alert("Password is too weak")
     }else{
-      signup.mutate({ id: username, name, image: imageUrl, password: password });
+      signup.mutate({ id: username, name, image: imageUrl })
     }
+
   }
 
   return (
@@ -46,7 +46,7 @@ export function Signup() {
         <label htmlFor="imageUrl">Image Url</label>
         <Input id="imageUrl" type="url" ref={imageUrlRef} />
         <label htmlFor="password">Password</label>
-        <Input type="password" id="password" required ref={passwordRef} />
+        <Input id="password" type="password" ref={passwordRef} />
         <Button
           disabled={signup.isLoading}
           type="submit"

@@ -13,8 +13,12 @@ import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
 import { Button } from "../components/Button"
 import { useLoggedInAuth } from "../context/AuthContext"
+import { StreamChat } from 'stream-chat'
+import { useState } from "react"
 
 export function Home() {
+    const client = StreamChat.getInstance("e2e7k9accxxp");
+
   const { user, streamChat } = useLoggedInAuth()
 
   if (streamChat == null) return <LoadingIndicator />

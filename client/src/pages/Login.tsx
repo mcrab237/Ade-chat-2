@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from "react"
+import { FormEvent, useRef } from "react"
 import { Navigate } from "react-router-dom"
 import { Button } from "../components/Button"
 import { Input } from "../components/Input"
@@ -7,7 +7,8 @@ import { useAuth } from "../context/AuthContext"
 export function Login() {
   const { login, user } = useAuth()
   const usernameRef = useRef<HTMLInputElement>(null)
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null)
+
   if (user != null) return <Navigate to="/" />
 
   function handleSubmit(e: FormEvent) {
@@ -15,21 +16,19 @@ export function Login() {
     if (login.isLoading) return
 
     const username = usernameRef.current?.value
-    const password = passwordRef.current?.value || '';
-
-    if (username == null || username === "") {
+    const password = passwordRef.current?.value
+    if (username == null || username === "" ||password == null || password === "") {
       return
     }
 
     if(password === null || password === ""){
-      alert("Please enter Password")
-    } else if (password.length < 7){
-      alert("Password is Wrong ")
+      alert("Please Enter Password")
+    } else if(password.length < 8 ){
+      alert("Password is too weak")
+    }else{
+      login.mutate(username)
     }
-else{
-  login.mutate({ id: username, password: password });
 
-}
   }
 
   return (
@@ -42,7 +41,7 @@ else{
         <label htmlFor="userName">Username</label>
         <Input id="userName" required ref={usernameRef} />
         <label htmlFor="password">Password</label>
-        <Input type="password" id="password" required ref={passwordRef}/>
+        <Input id="password" type="password" ref={passwordRef} />
         <Button
           disabled={login.isLoading}
           type="submit"

@@ -24,7 +24,7 @@ export function Sigin(email: string,password: string){
     return signInWithEmailAndPassword(auth, email, password)
 }
 
-export function Signup(email: string,password: string){
+export function signup(email: string,password: string){
     return createUserWithEmailAndPassword(auth, email,password)
 }
 
