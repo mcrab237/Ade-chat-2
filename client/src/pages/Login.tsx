@@ -1,4 +1,4 @@
-import { FormEvent, useRef } from "react"
+import { FormEvent, useRef, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { Button } from "../components/Button"
 import { Input } from "../components/Input"
@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext"
 export function Login() {
   const { login, user } = useAuth()
   const usernameRef = useRef<HTMLInputElement>(null)
-
+  const passwordRef = useRef<HTMLInputElement>(null);
   if (user != null) return <Navigate to="/" />
 
   function handleSubmit(e: FormEvent) {
@@ -15,11 +15,21 @@ export function Login() {
     if (login.isLoading) return
 
     const username = usernameRef.current?.value
+    const password = passwordRef.current?.value || '';
+
     if (username == null || username === "") {
       return
     }
 
-    login.mutate(username)
+    if(password === null || password === ""){
+      alert("Please enter Password")
+    } else if (password.length < 7){
+      alert("Password is Wrong ")
+    }
+else{
+  login.mutate({ id: username, password: password });
+
+}
   }
 
   return (
@@ -31,6 +41,8 @@ export function Login() {
       >
         <label htmlFor="userName">Username</label>
         <Input id="userName" required ref={usernameRef} />
+        <label htmlFor="password">Password</label>
+        <Input type="password" id="password" required ref={passwordRef}/>
         <Button
           disabled={login.isLoading}
           type="submit"

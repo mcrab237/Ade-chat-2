@@ -50,8 +50,8 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
         ? loadedChannels.map(channel => {
             const isActive = channel === activeChannel
             const extraClasses = isActive
-              ? "bg-blue-500 text-white"
-              : "hover:bg-blue-100 bg-gray-100"
+              ? "bg-green-500 text-white"
+              : "hover:bg-green-900 bg-gray-100"
             return (
               <button
                 onClick={() => setActiveChannel(channel)}

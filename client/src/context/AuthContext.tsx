@@ -1,4 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
+import {auth, Signup,Sigin } from "../firebase";
+
 import {
   UseMutationOptions,
   UseMutationResult,
@@ -14,12 +16,13 @@ import {
 import { useNavigate } from "react-router-dom"
 import { StreamChat } from "stream-chat"
 import { useLocalStorage } from "../hooks/useLocalStorage"
+import { signInWithPopup, signOut, updateProfile } from "firebase/auth";
 
 type AuthContext = {
   user?: User
   streamChat?: StreamChat
   signup: UseMutationResult<AxiosResponse, unknown, User>
-  login: UseMutationResult<{ token: string; user: User }, unknown, string>
+  login: UseMutationResult<{ token: string; user: User }, unknown, { id: string; password: string }>;
   logout: UseMutationResult<AxiosResponse, unknown, void>
 }
 
@@ -27,6 +30,7 @@ type User = {
   id: string
   name: string
   image?: string
+  password?: string
 }
 
 const Context = createContext<AuthContext | null>(null)
@@ -51,7 +55,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [streamChat, setStreamChat] = useState<StreamChat>()
 
   const signup = useMutation({
-    mutationFn: (user: User) => {
+    mutationFn: async (user: User) => {
+      const { id, password, name, image } = user;
+      await Signup(id, password!);
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await updateProfile(currentUser, {
+          displayName: name,
+          photoURL: image,
+        });
+      }
       return axios.post(`${import.meta.env.VITE_SERVER_URL}/signup`, user)
     },
     onSuccess() {
@@ -60,7 +73,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   })
 
   const login = useMutation({
-    mutationFn: (id: string) => {
+    mutationFn: async (credentials: { id: string; password: string }) => {
+      const { id, password } = credentials;
+      await Sigin(id, password);
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        setUser({
+          id: currentUser.email!,
+          name: currentUser.displayName!,
+        });
+      }
       return axios
         .post(`${import.meta.env.VITE_SERVER_URL}/login`, { id })
         .then(res => {
@@ -74,7 +96,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   })
 
   const logout = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
+      await signOut(auth);
       return axios.post(`${import.meta.env.VITE_SERVER_URL}/logout`, { token })
     },
     onSuccess() {
